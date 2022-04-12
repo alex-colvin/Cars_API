@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from .serializers import CarSerializer
 from .models import Car
 
@@ -18,3 +19,13 @@ def cars_list(request):
             return Response(serializer.data, status=201)
         else:
             return Response(serializer.errors, status=400)
+
+@api_view(['GET'])
+def car_detail(request, pk):
+    try:
+        car = Car.objects.get(pk=pk)
+        serializer = CarSerializer(car)
+        return Response(serializer.data)
+
+    except Car.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
